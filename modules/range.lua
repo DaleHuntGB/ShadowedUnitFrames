@@ -76,10 +76,16 @@ local function checkRange(self)
 	elseif( UnitCanAttack("player", frame.unit) ) then
 		spell = rangeSpells.hostile
 	end
-	if( not UnitIsConnected(frame.unit) or UnitPhaseReason(frame.unit) ) then
+	if( not UnitIsConnected(frame.unit) or UnitPhaseReason(frame.unit)) then
 		frame:SetRangeAlpha(ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
+	elseif (UnitIsDeadOrGhost(frame.unit)) then
+		frame:SetRangeAlpha(getMaxRange(frame.unit) and ShadowUF.db.profile.units[frame.unitType].range.inAlpha or ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
 	elseif( spell ) then
-		frame:SetRangeAlpha(LSR.IsSpellInRange(spell, frame.unit) == 1 and ShadowUF.db.profile.units[frame.unitType].range.inAlpha or ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
+		if LSR.IsSpellInRange(spell, frame.unit) == 1 then
+			frame:SetRangeAlpha(ShadowUF.db.profile.units[frame.unitType].range.inAlpha)
+		else
+			frame:SetRangeAlpha(ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
+		end
 	-- That didn't work, but they are grouped lets try the actual API for this, it's a bit flaky though and not that useful generally
 	elseif( UnitInRaid(frame.unit) or UnitInParty(frame.unit) ) then
 		frame:SetRangeAlpha(UnitInRange(frame.unit, "player") and ShadowUF.db.profile.units[frame.unitType].range.inAlpha or ShadowUF.db.profile.units[frame.unitType].range.oorAlpha)
